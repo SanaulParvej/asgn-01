@@ -1,61 +1,99 @@
-import 'package:args/args.dart';
-
-const String version = '0.0.1';
-
-ArgParser buildParser() {
-  return ArgParser()
-    ..addFlag(
-      'help',
-      abbr: 'h',
-      negatable: false,
-      help: 'Print this usage information.',
-    )
-    ..addFlag(
-      'verbose',
-      abbr: 'v',
-      negatable: false,
-      help: 'Show additional command output.',
-    )
-    ..addFlag(
-      'version',
-      negatable: false,
-      help: 'Print the tool version.',
-    );
+abstract class Role {
+  void displayRole();
 }
 
-void printUsage(ArgParser argParser) {
-  print('Usage: dart asgn_01.dart <flags> [arguments]');
-  print(argParser.usage);
-}
+class Person implements Role {
+  final String name;
+  final int age;
+  final String address;
 
-void main(List<String> arguments) {
-  final ArgParser argParser = buildParser();
-  try {
-    final ArgResults results = argParser.parse(arguments);
-    bool verbose = false;
+  Person(this.name, this.age, this.address);
 
-    // Process the parsed arguments.
-    if (results.wasParsed('help')) {
-      printUsage(argParser);
-      return;
-    }
-    if (results.wasParsed('version')) {
-      print('asgn_01 version: $version');
-      return;
-    }
-    if (results.wasParsed('verbose')) {
-      verbose = true;
-    }
-
-    // Act on the arguments provided.
-    print('Positional arguments: ${results.rest}');
-    if (verbose) {
-      print('[VERBOSE] All arguments: ${results.arguments}');
-    }
-  } on FormatException catch (e) {
-    // Print usage information if an invalid argument was provided.
-    print(e.message);
-    print('');
-    printUsage(argParser);
+  @override
+  void displayRole() {
+    print("Role: Undefined");
   }
+}
+
+class Student extends Person {
+  final String studentID;
+  final String grade;
+  final List<double> courseScores;
+
+  Student(
+      String name,
+      int age,
+      String address,
+      this.studentID,
+      this.grade,
+      this.courseScores,
+      ) : super(name, age, address);
+
+  @override
+  void displayRole() {
+    print("Role: Student");
+  }
+
+  double calculateAverageScore() {
+    return courseScores.reduce((a, b) => a + b) / courseScores.length;
+  }
+}
+
+class Teacher extends Person {
+  final String teacherID;
+  final List<String> coursesTaught;
+
+  Teacher(
+      String name,
+      int age,
+      String address,
+      this.teacherID,
+      this.coursesTaught,
+      ) : super(name, age, address);
+
+  @override
+  void displayRole() {
+    print("Role: Teacher");
+  }
+
+  void displayCoursesTaught() {
+    print("Courses Taught:");
+    for (var course in coursesTaught) {
+      print("- $course");
+    }
+  }
+}
+
+void main() {
+  Student student = Student(
+    "Sanaul Parvej",
+    24,
+    "Dhaka",
+    "S123",
+    "Grade 10",
+    [90, 85, 82],
+  );
+
+  Teacher teacher = Teacher(
+    "Taufiqur Rahman",
+    35,
+    "Dhaka",
+    "T456",
+    ["Math", "English", "Bangla"],
+  );
+
+  print("Student Information:");
+  student.displayRole();
+  print("Name: ${student.name}");
+  print("Age: ${student.age}");
+  print("Address: ${student.address}");
+  print("Average Score: ${student.calculateAverageScore()}\n");
+
+
+  print("Teacher Information:");
+  teacher.displayRole();
+  print("Name: ${teacher.name}");
+  print("Age: ${teacher.age}");
+  print("Address: ${teacher.address}");
+  teacher.displayCoursesTaught();
 }
