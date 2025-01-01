@@ -63,7 +63,6 @@ class Teacher extends Person {
     }
   }
 }
-
 void main() {
   Student student = Student(
     "Sanaul Parvej",
